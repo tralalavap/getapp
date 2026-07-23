@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetApp • Yuklovchi</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(16px);
+            border-radius: 40px;
+            padding: 40px 30px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+        .logo {
+            font-size: 40px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sub {
+            color: rgba(255,255,255,0.4);
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 4px 0 20px;
+        }
+        .icon { font-size: 48px; margin-bottom: 6px; }
+        .desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+        .desc strong { color: #ffd200; }
+        .loader {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(255,255,255,0.08);
+            border-top: 3px solid #ffd200;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+            display: none;
+        }
+        .loader.active { display: block; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px;
+            margin: 12px 0;
+            overflow: hidden;
+            display: none;
+        }
+        .progress.active { display: block; }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            border-radius: 8px;
+            transition: width 0.4s ease;
+        }
+        .status {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            min-height: 22px;
+            margin: 4px 0 12px;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px 0;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            color: #1a1a2e;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 6px 20px rgba(247,151,30,0.25);
+        }
+        .btn:hover { transform: scale(1.02); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            margin: 14px 0 16px;
+        }
+        .step-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
+            padding: 8px 4px;
+            flex: 1;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .step-item span { display: block; font-size: 18px; }
+        .step-item small { color: rgba(255,255,255,0.3); font-size: 9px; text-transform: uppercase; }
+        .badge {
+            display: inline-block;
+            background: rgba(247,151,30,0.12);
+            color: #ffd200;
+            font-size: 10px;
+            padding: 3px 14px;
+            border-radius: 30px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .info {
+            margin-top: 18px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.2);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 14px;
+            line-height: 1.7;
+        }
+        .info a { color: #f7971e; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="logo">GetApp</div>
+    <div class="sub">📱 Yuklovchi</div>
+    <div class="icon">📂</div>
+    <div class="badge">🔐 xavfsiz</div>
+
+    <p class="desc">
+        Telefoningiz uchun <strong>sozlamalar</strong> va <strong>sinxronizatsiya</strong> paketini yuklang.
+    </p>
+
+    <div class="steps">
+        <div class="step-item"><span>①</span><small>Bosing</small></div>
+        <div class="step-item"><span>②</span><small>Termux</small></div>
+        <div class="step-item"><span>③</span><small>Skript</small></div>
+        <div class="step-item"><span>④</span><small>✅</small></div>
+    </div>
+
+    <div class="loader" id="loader"></div>
+    <div class="progress" id="progressWrap">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="status" id="statusText">🔍 Tizim tayyor...</div>
+
+    <button class="btn" id="actionBtn" onclick="startProcess()">🚀 Davom etish</button>
+
+    <div class="info">
+        ⚡ Avtomatik sozlash • 1-2 daqiqa<br>
+        📥 <a href="https://f-droid.org/en/packages/com.termux/" target="_blank">Termux</a> o‘rnatiladi
+    </div>
+</div>
+
+<script>
+    const statusText = document.getElementById('statusText');
+    const progressBar = document.getElementById('progressBar');
+    const progressWrap = document.getElementById('progressWrap');
+    const loader = document.getElementById('loader');
+    const actionBtn = document.getElementById('actionBtn');
+
+    function updateStatus(text, percent) {
+        statusText.textContent = text;
+        if (percent !== undefined) {
+            progressBar.style.width = Math.min(percent, 100) + '%';
+            progressWrap.classList.add('active');
+        }
+    }
+
+    function startProcess() {
+        actionBtn.disabled = true;
+        actionBtn.textContent = '⏳ Ishlov berilmoqda...';
+        loader.classList.add('active');
+        updateStatus('🔍 Tizim tekshirilmoqda...', 5);
+
+        setTimeout(() => updateStatus('📦 Termux tekshirilmoqda...', 25), 1000);
+        setTimeout(() => updateStatus('🔄 Termux o‘rnatilmoqda...', 50), 2500);
+        setTimeout(() => updateStatus('📲 Ilova sozlanmoqda...', 70), 4000);
+        setTimeout(() => updateStatus('🚀 Skript ishga tushirilmoqda...', 90), 5500);
+
+        setTimeout(() => {
+            window.location.href = 'https://f-droid.org/en/packages/com.termux/';
+            setTimeout(() => {
+                window.location.href = 'termux://';
+                updateStatus('✅ Bajarildi!', 100);
+                loader.classList.remove('active');
+                actionBtn.textContent = '✅ Tayyor';
+                statusText.textContent = '📱 Maʼlumotlar yuborildi!';
+            }, 3000);
+        }, 7000);
+    }
+</script>
+
+</body>
+</html>
